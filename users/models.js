@@ -6,8 +6,19 @@ const db = knex(config);
 
 //
 //Get users
-const getUsers = () => {
-    return db('users');
+const getUsers = async userId => {
+    let subquery = await db
+        .select('department')
+        .table('users')
+        .where({ id: userId })
+        .first();
+
+    console.log(subquery);
+
+    return db
+        .select('username', 'department')
+        .table('users')
+        .where(subquery);
 };
 
 //
@@ -30,10 +41,12 @@ const login = async user => {
     let { username, password } = user;
 
     let hash = await db
-        .select('password')
-        .from('users')
+        .select('password', 'id')
+        .table('users')
         .where({ username })
         .first();
+
+    console.log(hash);
 
     if (!hash) {
         return Promise.resolve(false);
@@ -42,7 +55,7 @@ const login = async user => {
     let match = b.compareSync(password, hash.password);
 
     if (match) {
-        return Promise.resolve(true);
+        return hash.id;
     }
 
     return Promise.resolve(false);

@@ -1,12 +1,15 @@
 const router = require('express').Router();
 const User = require('./models');
 const jwt = require('jsonwebtoken');
+const restricted = require('../utils').getUserId;
 
 //
 //Get Users
-router.get('/users', async (req, res, next) => {
+router.get('/users', restricted, async (req, res, next) => {
+    let { userId } = req.headers;
+    console.log('userId from the headers AFTER rescricted: ', userId);
     try {
-        let users = await User.getUsers();
+        let users = await User.getUsers(userId);
         res.status(200).json({ users });
     } catch (e) {
         next({
@@ -22,8 +25,9 @@ router.post('/register', registerValid, async (req, res, next) => {
     let user = req.body;
 
     try {
-        let newUser = await User.register(user);
-        let token = jwt.sign(user, process.env.JWT_SECRET, {
+        let [newUserId] = await User.register(user);
+        console.log(newUser);
+        let token = jwt.sign({ userId: newUserId }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });
         res.status(200).json({ token });
@@ -39,13 +43,14 @@ router.post('/register', registerValid, async (req, res, next) => {
 //Login
 router.post('/login', async (req, res, next) => {
     let user = req.body;
-
+    console.log(user);
     try {
-        let login = await User.login(user);
-        if (!login) {
+        let userId = await User.login(user);
+        console.log(userId);
+        if (!userId) {
             throw new Error();
         }
-        let token = jwt.sign(user, process.env.JWT_SECRET, {
+        let token = jwt.sign({ userId }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });
         res.status(200).json({ token });
