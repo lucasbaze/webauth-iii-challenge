@@ -8,6 +8,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 //
+//Route Middleware
+const userRoutes = require('./users/routes');
+
+//
 //Initialize Server
 const server = express();
 
@@ -22,6 +26,10 @@ server.use(morgan('tiny'));
 server.get('/', (req, res) => {
     res.send('Server is listening. Server is watching.');
 });
+
+//
+//Use Routes
+server.use('/api', userRoutes);
 
 //
 //Error Handler
