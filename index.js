@@ -12,6 +12,7 @@ const helmet = require('helmet');
 const server = express();
 
 //Initialize Middleware
+server.use(express.json());
 server.use(helmet());
 server.use(cors());
 server.use(morgan('tiny'));
