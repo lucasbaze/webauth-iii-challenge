@@ -2,6 +2,7 @@ const express = require('express');
 
 //
 //Middleware Imports
+require('dotenv').config();
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -18,7 +19,7 @@ server.use(morgan('tiny'));
 //
 //Dummy Route
 server.get('/', (req, res) => {
-    res.send('Server is listening. Server is watching');
+    res.send('Server is listening. Server is watching.');
 });
 
 //
