@@ -6,10 +6,25 @@ require('dotenv').config();
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+// const sessions = require('express-session');
 
 //
 //Route Middleware
 const userRoutes = require('./users/routes');
+
+//
+//Config
+// const sessionConfig = {
+//     name: 'session',
+//     secret: process.env.SESSION_SECRET,
+//     cookie: {
+//         httpOnly: true,
+//         secure: false,
+//         maxAge: 1000 * 60 * 60 * 24,
+//     },
+//     resave: false,
+//     saveUninitialized: false,
+// };
 
 //
 //Initialize Server
@@ -20,6 +35,7 @@ server.use(express.json());
 server.use(helmet());
 server.use(cors());
 server.use(morgan('tiny'));
+// server.use(sessions(sessionConfig));
 
 //
 //Dummy Route

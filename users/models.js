@@ -15,7 +15,7 @@ const getUsers = () => {
 const register = newUser => {
     let { password } = newUser;
 
-    password = b.hashSync(password, 12);
+    password = b.hashSync(password, 8);
 
     newUser.password = password;
 

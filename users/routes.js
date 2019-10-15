@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('./models');
+const jwt = require('jsonwebtoken');
 
 //
 //Get Users
@@ -22,11 +23,36 @@ router.post('/register', registerValid, async (req, res, next) => {
 
     try {
         let newUser = await User.register(user);
-        res.status(200).json({ newUser });
+        let token = jwt.sign(user, process.env.JWT_SECRET, {
+            expiresIn: '1h',
+        });
+        res.status(200).json({ token });
     } catch (e) {
         next({
             code: 500,
             message: 'Server error. The fire nation attacked. Try again',
+        });
+    }
+});
+
+//
+//Login
+router.post('/login', async (req, res, next) => {
+    let user = req.body;
+
+    try {
+        let login = await User.login(user);
+        if (!login) {
+            throw new Error();
+        }
+        let token = jwt.sign(user, process.env.JWT_SECRET, {
+            expiresIn: '1h',
+        });
+        res.status(200).json({ token });
+    } catch (e) {
+        next({
+            code: 409,
+            message: 'Login / Password is incorrect',
         });
     }
 });
